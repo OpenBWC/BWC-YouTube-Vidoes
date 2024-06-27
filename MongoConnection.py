@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
+from icecream import ic
 
 load_dotenv()
 MONGO_USERNAME = os.getenv("MONGO_USERNAME")

@@ -2,8 +2,7 @@ import os
 import pymongo
 from bson.objectid import ObjectId
 import MongoConnection
-
-
+from icecream import ic
 from dotenv import load_dotenv
 from pprint import PrettyPrinter
 from googleapiclient.discovery import build
