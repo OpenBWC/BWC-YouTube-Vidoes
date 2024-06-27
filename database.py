@@ -18,3 +18,6 @@ try:
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+
+for db_name in client.list_database_names():
+    print(db_name)
