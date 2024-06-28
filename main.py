@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from pprint import PrettyPrinter
 from googleapiclient.discovery import build
 
+
 # Load my api key that is stored as an environment variable into this environment
 load_dotenv()
 YT_CREDENTIALS = os.getenv("YOUTUBE_API_KEY")
