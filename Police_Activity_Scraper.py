@@ -55,24 +55,39 @@ def process_api_response(response):
     """
     This function sifts through the JSON object reponse and gets the data from the following fields: 
 
+    title: title of the youtube video --> mongoDB & pandas df
     videoId: unique id of the youtube video --> mongoDB 
     channelID: check to make sure that this video is coming from the Police Activity YT channel --> mongoDB
-    description: description of the YouTube video **remove bogus info from description like Patreon supporters --> mongoDB
     playlistID: check to make sure that the video is coming from the correct playlist
-    title: title of the youtube video --> mongoDB & pandas df
+    description: description of the YouTube video **remove bogus info from description like Patreon supporters --> mongoDB
+    
     nextPageToken: token to get the search results from the next page --> return value
 
-    Then a new dictionary is created with the above fields as key value pairs in preparation for inputting
+    dict_response --> Then a new dictionary is created with the above fields as key value pairs in preparation for inputting
     the data into mongoDB. 
 
     returns nextPageToken for subsequent calls to pages and the dictionary
     
     """
 
-    dict_response = {}
+    video_title = response['items'][0]['snippet']['title']
+    video_ID = response['items'][0]['contentDetails']['videoId']
+    channel_ID = response['items'][0]['snippet']['channelId']
+    playlist_ID = response['items'][0]['snippet']['playlistId']
+    
+    if ['items'][0]['snippet']['channelId'] != PM.POLICE_ACTIVITY_ID:
+        return "Mistake, the channel Id is not correct for this video id: " + video_ID
+    elif ['items'][0]['snippet']['playlistId'] != PM.PA_PLAYLIST_ID:
+        return "Mistake: the playlist ID is not correct for this video id: " + video_ID
+    else:
+        dict_response = {}
 
-    dict_response['video title'] = response['items'][0]['snippet']['title']
+        dict_response['video title'] = video_title
+        dict_response['video ID'] = video_ID
+        dict_response['channel ID'] = channel_ID
+        dict_response['playlist ID'] = playlist_ID
 
+    
 
 
     return nextPageToken, dict_reponse
