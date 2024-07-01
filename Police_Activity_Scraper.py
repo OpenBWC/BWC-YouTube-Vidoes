@@ -44,7 +44,38 @@ def execute_request(created_request):
 
     return response
 
+def place_in_mongoDB():
+    """
+    This function 
+    """
 
+def process_api_response(response):
+
+
+    """
+    This function sifts through the JSON object reponse and gets the data from the following fields: 
+
+    videoId: unique id of the youtube video --> mongoDB 
+    channelID: check to make sure that this video is coming from the Police Activity YT channel --> mongoDB
+    description: description of the YouTube video **remove bogus info from description like Patreon supporters --> mongoDB
+    playlistID: check to make sure that the video is coming from the correct playlist
+    title: title of the youtube video --> mongoDB & pandas df
+    nextPageToken: token to get the search results from the next page --> return value
+
+    Then a new dictionary is created with the above fields as key value pairs in preparation for inputting
+    the data into mongoDB. 
+
+    returns nextPageToken for subsequent calls to pages and the dictionary
+    
+    """
+
+    dict_response = {}
+
+    dict_response['video title'] = response['items'][0]['snippet']['title']
+
+
+
+    return nextPageToken, dict_reponse
 
 # this function will use the 'nextPageToken' to iterate through the 
 def iterate_through_pages():
