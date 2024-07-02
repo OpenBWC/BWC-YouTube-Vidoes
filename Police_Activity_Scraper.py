@@ -12,7 +12,7 @@ import string
 """
 Global Variables 
 """
-
+COUNT = 0
 TOKENS_DICTIONARY = {}
 
 def setup_yt_query():
@@ -21,11 +21,11 @@ def setup_yt_query():
     returns the youtube model object
     """
 
-    youtube = build('youtube','v3', developerKey=PM.YT_CREDENTIALS)
+    youtube_object = build('youtube','v3', developerKey=PM.YT_CREDENTIALS)
 
-    return youtube
+    return youtube_object
 
-def create_request(youtube_object, input_pageToken):
+def create_request(youtube_object, input_pageToken=""):
     """
     This function constructs the youtube request based on the previously created
     youtube_object AND the input_pageToken which gets results from different pages.
@@ -49,7 +49,7 @@ def execute_request(created_request):
 
     return response
 
-def place_in_mongoDB():
+def place_in_mongoDB(dict_response):
     """
     This function 
     """
@@ -168,24 +168,25 @@ def process_api_response(response):
     
     if channel_ID != PM.POLICE_ACTIVITY_ID:
         return "Mistake, the channel Id is not correct for this video id: " + video_ID
-    elif playlist_ID != PM.PA_PLAYLIST_ID:
+    if playlist_ID != PM.PA_PLAYLIST_ID:
         return "Mistake: the playlist ID is not correct for this video id: " + video_ID
-    else:
 
-        video_title = response['items'][0]['snippet']['title']
-        video_ID = response['items'][0]['contentDetails']['videoId']
-        raw_description = response['items'][0]['snippet']['description']
-        video_description = clean_description(raw_description)
-        nextPageToken = response['nextPageToken']
 
-        dict_response = {}
+    video_title = response['items'][0]['snippet']['title']
+    video_ID = response['items'][0]['contentDetails']['videoId']
+    raw_description = response['items'][0]['snippet']['description']
+    video_description = clean_description(raw_description)
+    nextPageToken = response['nextPageToken']
 
-        dict_response['video title'] = video_title
-        dict_response['video ID'] = video_ID
-        dict_response['channel ID'] = channel_ID
-        dict_response['playlist ID'] = playlist_ID
-        dict_response['video_description'] = video_description
+    dict_response = {}
 
+    dict_response['video title'] = video_title
+    dict_response['video ID'] = video_ID
+    dict_response['channel ID'] = channel_ID
+    dict_response['playlist ID'] = playlist_ID
+    dict_response['video_description'] = video_description
+
+    write_tokens_to_dict(tokenize_vid_title(video_title))
     
 
 
@@ -193,13 +194,32 @@ def process_api_response(response):
 
 # this function will use the 'nextPageToken' to iterate through the 
 def iterate_through_pages():
-        
+    global COUNT
+    if COUNT == 0:
+        youtube_object = setup_yt_query()
+        youtube_request = create_request(youtube_object)
+        response = execute_request(youtube_request)
 
-    return False
+
+        nextPageToken, dict_response = process_api_response(response)
+        COUNT+=1
+    else:
+
+        while nextPageToken != None:
+            if COUNT > 38:
+                break
+            else:
+                iterate_through_pages()
+                place_in_mongoDB(dict_response)
+                COUNT+=1
+
+
+    
 
 def main(): 
+    iterate_through_pages()
     
-    return False
+   
    
 if __name__ == "__main__":
     main()
