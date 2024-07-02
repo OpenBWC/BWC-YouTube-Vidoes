@@ -19,6 +19,7 @@ Global Variables
 """
 COUNT = 0
 TOKENS_DICTIONARY = {}
+PAGE_TOKENS_LIST = []
 
 def setup_yt_query():
     """This function creates the youtube model / object. Only run once.
@@ -183,15 +184,18 @@ def process_api_response(response):
     video_title = response['items'][0]['snippet']['title']
     video_ID = response['items'][0]['contentDetails']['videoId']
     raw_description = response['items'][0]['snippet']['description']
+
     video_description = clean_description(raw_description)
+
     nextPageToken = response['nextPageToken']
+    PAGE_TOKENS_LIST.append(nextPageToken) # --> I can slighty adjust the code if something breaks without using api calls
 
     dict_response = {}
 
-    dict_response['video title'] = video_title
-    dict_response['video ID'] = video_ID
-    dict_response['channel ID'] = channel_ID
-    dict_response['playlist ID'] = playlist_ID
+    dict_response['video_title'] = video_title
+    dict_response['video_ID'] = video_ID
+    dict_response['channel_ID'] = channel_ID
+    dict_response['playlist_ID'] = playlist_ID
     dict_response['video_description'] = video_description
 
     write_tokens_to_dict(tokenize_vid_title(video_title))
@@ -216,7 +220,7 @@ def iterate_through_pages():
         while nextPageToken != "":
             
             iterate_through_pages()
-            place_in_mongoDB(dict_response)
+            MC.append_UOF_COLLECTION(dict_response)
             COUNT+=1
 
 
