@@ -4,10 +4,15 @@ from bson.objectid import ObjectId
 import MongoConnection
 from icecream import ic
 import project_main as PM
-from pprint import PrettyPrinter
+from pprint import PrettyPrinter as pp
 from googleapiclient.discovery import build
 import re
 import string
+import MongoConnection as MC
+
+"""
+This py file gets use of force videos and puts them into a database.
+"""
 
 """
 Global Variables 
@@ -41,18 +46,21 @@ def create_request(youtube_object, input_pageToken=""):
 
 
 def execute_request(created_request):
+    global COUNT
     """Executes the request that was created from the create_request function
     
     returns the response JSON object / type dictionary
     """
     response = created_request.execute()
 
+    pp.pprint("Executed request number: " + COUNT)
+
     return response
 
-def place_in_mongoDB(dict_response):
-    """
-    This function 
-    """
+
+    
+    
+
 def tokenize_vid_title(video_title_string):
     """This function takes the video title field returned from the YouTube api
     and it converts it into a list of words with punctuation removed
@@ -205,20 +213,22 @@ def iterate_through_pages():
         COUNT+=1
     else:
 
-        while nextPageToken != None:
-            if COUNT > 38:
-                break
-            else:
-                iterate_through_pages()
-                place_in_mongoDB(dict_response)
-                COUNT+=1
+        while nextPageToken != "":
+            
+            iterate_through_pages()
+            place_in_mongoDB(dict_response)
+            COUNT+=1
 
 
     
 
 def main(): 
-    iterate_through_pages()
-    
+    #iterate_through_pages()
+
+
+    #pp.pprint(COUNT)
+    #pp.pprint(TOKENS_DICTIONARY)
+    MC.confirm_connection(MC.MONGO_CLIENT)
    
    
 if __name__ == "__main__":
