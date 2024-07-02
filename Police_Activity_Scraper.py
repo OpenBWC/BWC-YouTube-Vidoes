@@ -6,6 +6,8 @@ from icecream import ic
 import project_main as PM
 from pprint import PrettyPrinter
 from googleapiclient.discovery import build
+import re
+import string
 
 
 
@@ -48,6 +50,13 @@ def place_in_mongoDB():
     """
     This function 
     """
+def tokenize_vid_title(video_title_string):
+    """This function takes the video title field returned from the YouTube api
+    and it converts it into a list of words with punctuation removed"""
+
+    string_list =  [re.sub('^[{0}]+|[{0}]+$'.format(string.punctuation), '', w) for w in string.split()]
+
+    return string_list
 
 def process_api_response(response):
 
@@ -69,11 +78,12 @@ def process_api_response(response):
     returns nextPageToken for subsequent calls to pages and the dictionary
     
     """
-
+    
     video_title = response['items'][0]['snippet']['title']
     video_ID = response['items'][0]['contentDetails']['videoId']
     channel_ID = response['items'][0]['snippet']['channelId']
     playlist_ID = response['items'][0]['snippet']['playlistId']
+    description = response['items'][0]['snippet']['description']
     
     if ['items'][0]['snippet']['channelId'] != PM.POLICE_ACTIVITY_ID:
         return "Mistake, the channel Id is not correct for this video id: " + video_ID
