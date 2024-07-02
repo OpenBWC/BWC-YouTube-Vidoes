@@ -60,13 +60,42 @@ def tokenize_vid_title(video_title_string):
 
     return string_list
 
+def get_timestamps(vid_description):
+
+    """
+    This fuction tries to find a "Timestamps:" section of the video. If there isn't one, it returns false.
+    If there is a timestamps section of the video it return that timestamps section.
+    """
+    # Find the starting index of "Timestamps:"
+    start_index = vid_description.find("Timestamps:")
+    
+    if start_index == -1:
+        # If "Timestamps:" is not found, return an empty string or handle as needed
+        return ""
+    
+    # Extract the text from "Timestamps:" to the end
+    timestamps_section = vid_description[start_index:]
+    
+    # If there's a delimiter (e.g., '\n\n'), find its index and slice up to it
+    end_index = timestamps_section.find('\n\n')
+    if end_index != -1:
+        timestamps_section = timestamps_section[:end_index]
+    
+    return timestamps_section.strip()
+
 def clean_description(vid_description):
     """
     Clean Description func removes all the patreon supporter information and uncessary emojis from the
     video description.
 
-    Use chatgpt to generate most of the code found below.
+    Used chatgpt to generate most of the code found below.Slighty edited to code to get information that I wanted.
     """
+
+    # get the timestamp if it exists, else input no video timestamps
+    desired_text = get_timestamps(vid_description)
+    if desired_text == "":
+        desired_text = "No video Timestamps"
+
     # Define the pattern to search for cleaning
     pattern = r'Special thanks to Shout-Out Supporters on Patreon:'
 
@@ -75,20 +104,20 @@ def clean_description(vid_description):
 
     if match:
         # Extract the vid_description before the match
-        desired_text = vid_description[:match.start()].strip()
+        desired_text += vid_description[:match.start()].strip()
     else:
         # If pattern is not found, consider handling the case (e.g., read until end)
-        desired_text = vid_description
+        desired_text += vid_description
 
-    pattern2 = pattern = r'⭐⭐⭐⭐⭐'
+    pattern2 = r'⭐⭐⭐⭐⭐'
 
     match2 = re.search(pattern2, vid_description)
     if match2:
         # Extract the vid_description before the match
-        desired_text = vid_description[:match2.start()].strip()
+        desired_text += vid_description[:match2.start()].strip()
     else:
         # If pattern is not found, consider handling the case (e.g., read until end)
-        desired_text = vid_description
+        desired_text += vid_description
 
     return desired_text
 
@@ -132,7 +161,7 @@ def process_api_response(response):
         video_ID = response['items'][0]['contentDetails']['videoId']
         raw_description = response['items'][0]['snippet']['description']
         video_description = clean_description(raw_description)
-
+        nextPageToken = 
 
         dict_response = {}
 
@@ -145,7 +174,7 @@ def process_api_response(response):
     
 
 
-    return nextPageToken, dict_reponse
+    return nextPageToken, dict_response
 
 # this function will use the 'nextPageToken' to iterate through the 
 def iterate_through_pages():
