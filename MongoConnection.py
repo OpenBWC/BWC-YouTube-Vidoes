@@ -80,7 +80,7 @@ def append_UOF_COLLECTION(dict_response):
     
     for key in dict_response:
         match key:
-            # for every case it should match the field from the dict response and correlate it with the doc dict equivalent
+            # for every case it should match the field from the dict response and correlate it with the doc dict equivalent 
             case "video_title":
                 document_dict['video_title'] = dict_response['video_title']
             case "video_ID":

@@ -54,7 +54,7 @@ def execute_request(created_request):
     """
     response = created_request.execute()
 
-    pp.pprint("Executed request number: " + COUNT)
+    print("Executed request number: " +str( COUNT))
 
     return response
 
@@ -211,7 +211,7 @@ def iterate_through_pages():
         youtube_object = setup_yt_query()
         youtube_request = create_request(youtube_object)
         response = execute_request(youtube_request)
-
+        pp.pprint(response)
 
         nextPageToken, dict_response = process_api_response(response)
         COUNT+=1
@@ -227,11 +227,12 @@ def iterate_through_pages():
     
 
 def main(): 
-    #iterate_through_pages()
+    iterate_through_pages()
 
 
-    #pp.pprint(COUNT)
-    #pp.pprint(TOKENS_DICTIONARY)
+    print(COUNT)
+    print(TOKENS_DICTIONARY)
+    
     MC.confirm_connection(MC.MONGO_CLIENT)
    
    
