@@ -6,8 +6,7 @@ Project Global Variables
 
 YT_Credentials --> api key for youtube api access
 POLICE_ACTIVITY_ID --> id of the police activity youtube channel
-PA_PLAYLIST_ID --> id of the playlist of all uploads from the police activity
-youtube channel
+PA_PLAYLIST_ID --> id of the playlist of all uploads from the police activity youtube channel
 '''
 load_dotenv()
 YT_CREDENTIALS = os.getenv("YOUTUBE_API_KEY")

@@ -28,7 +28,6 @@ def create_request(youtube_object, input_pageToken):
     
     returns the request that was created
     """
-
     request = youtube_object.playlistItems().list(part="snippet,contentDetails",
                                                   maxResults = 50,
                                                   pageToken=input_pageToken,
@@ -52,11 +51,46 @@ def place_in_mongoDB():
     """
 def tokenize_vid_title(video_title_string):
     """This function takes the video title field returned from the YouTube api
-    and it converts it into a list of words with punctuation removed"""
+    and it converts it into a list of words with punctuation removed
+    
+    This function will be used for building the keyword list for use of force / violent videos
+    """
 
     string_list =  [re.sub('^[{0}]+|[{0}]+$'.format(string.punctuation), '', w) for w in string.split()]
 
     return string_list
+
+def clean_description(vid_description):
+    """
+    Clean Description func removes all the patreon supporter information and uncessary emojis from the
+    video description.
+
+    Use chatgpt to generate most of the code found below.
+    """
+    # Define the pattern to search for cleaning
+    pattern = r'Special thanks to Shout-Out Supporters on Patreon:'
+
+    # Find the position where the pattern appears
+    match = re.search(pattern, vid_description)
+
+    if match:
+        # Extract the vid_description before the match
+        desired_text = vid_description[:match.start()].strip()
+    else:
+        # If pattern is not found, consider handling the case (e.g., read until end)
+        desired_text = vid_description
+
+    pattern2 = pattern = r'⭐⭐⭐⭐⭐'
+
+    match2 = re.search(pattern2, vid_description)
+    if match2:
+        # Extract the vid_description before the match
+        desired_text = vid_description[:match2.start()].strip()
+    else:
+        # If pattern is not found, consider handling the case (e.g., read until end)
+        desired_text = vid_description
+
+    return desired_text
 
 def process_api_response(response):
 
@@ -64,10 +98,13 @@ def process_api_response(response):
     """
     This function sifts through the JSON object reponse and gets the data from the following fields: 
 
-    title: title of the youtube video --> mongoDB & pandas df
-    videoId: unique id of the youtube video --> mongoDB 
+
     channelID: check to make sure that this video is coming from the Police Activity YT channel --> mongoDB
     playlistID: check to make sure that the video is coming from the correct playlist
+
+    video title: title of the youtube video --> mongoDB & pandas df
+    videoId: unique id of the youtube video --> mongoDB 
+    
     description: description of the YouTube video **remove bogus info from description like Patreon supporters --> mongoDB
     
     nextPageToken: token to get the search results from the next page --> return value
@@ -79,23 +116,31 @@ def process_api_response(response):
     
     """
     
-    video_title = response['items'][0]['snippet']['title']
-    video_ID = response['items'][0]['contentDetails']['videoId']
+    
     channel_ID = response['items'][0]['snippet']['channelId']
     playlist_ID = response['items'][0]['snippet']['playlistId']
-    description = response['items'][0]['snippet']['description']
+
     
-    if ['items'][0]['snippet']['channelId'] != PM.POLICE_ACTIVITY_ID:
+    
+    if channel_ID != PM.POLICE_ACTIVITY_ID:
         return "Mistake, the channel Id is not correct for this video id: " + video_ID
-    elif ['items'][0]['snippet']['playlistId'] != PM.PA_PLAYLIST_ID:
+    elif playlist_ID != PM.PA_PLAYLIST_ID:
         return "Mistake: the playlist ID is not correct for this video id: " + video_ID
     else:
+
+        video_title = response['items'][0]['snippet']['title']
+        video_ID = response['items'][0]['contentDetails']['videoId']
+        raw_description = response['items'][0]['snippet']['description']
+        video_description = clean_description(raw_description)
+
+
         dict_response = {}
 
         dict_response['video title'] = video_title
         dict_response['video ID'] = video_ID
         dict_response['channel ID'] = channel_ID
         dict_response['playlist ID'] = playlist_ID
+        dict_response['video_description'] = video_description
 
     
 
