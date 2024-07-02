@@ -9,7 +9,11 @@ from googleapiclient.discovery import build
 import re
 import string
 
+"""
+Global Variables 
+"""
 
+TOKENS_DICTIONARY = {}
 
 def setup_yt_query():
     """This function creates the youtube model / object. Only run once.
@@ -56,9 +60,20 @@ def tokenize_vid_title(video_title_string):
     This function will be used for building the keyword list for use of force / violent videos
     """
 
-    string_list =  [re.sub('^[{0}]+|[{0}]+$'.format(string.punctuation), '', w) for w in string.split()]
+    string_list =  [re.sub('^[{0}]+|[{0}]+$'.format(string.punctuation), '', w) for w in video_title_string.split()]
 
     return string_list
+
+def write_tokens_to_dict(token_list):
+    """
+    This func adds all the tokens from the video title and adds it to a dictionary. Each key
+    is a unique word. The value will be how many time that word appears in all 2,000 videos from Police Activity
+    """
+    for token in token_list:
+        if token in TOKENS_DICTIONARY:
+           TOKENS_DICTIONARY[token] +=1
+        else:
+            TOKENS_DICTIONARY[token] = 1
 
 def get_timestamps(vid_description):
 
@@ -161,7 +176,7 @@ def process_api_response(response):
         video_ID = response['items'][0]['contentDetails']['videoId']
         raw_description = response['items'][0]['snippet']['description']
         video_description = clean_description(raw_description)
-        nextPageToken = 
+        nextPageToken = response['nextPageToken']
 
         dict_response = {}
 
