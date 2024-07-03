@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
-from icecream import ic
 from pprint import PrettyPrinter as pp
 import Police_Activity_Scraper as PAS
 
