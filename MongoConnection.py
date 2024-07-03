@@ -67,6 +67,13 @@ def append_UOF_COLLECTION(dict_response):
     **Objects_detected as their own individual fields
 
     """
+    
+    query = {'YT_video_ID': dict_response['video_ID']}
+    results =  UOF_COLLECTION.count_documents(query)
+
+    if results == 0:
+        return False
+    
     document_dict = {
         'fileNumber':COUNT,
         'video_title':"",
@@ -95,21 +102,14 @@ def append_UOF_COLLECTION(dict_response):
                 document_dict[key] = dict_response[key]
 
 
-
+    
 
     UOF_COLLECTION.insert_one(document_dict)
     
     COUNT+=1
 
-# def main():
+if __name__ == "__main__":
+    confirm_connection()
+    append_UOF_COLLECTION()
 
-#     client = create_client_connection()
-
-#     confirm_connection(client)
-
-# if __name__ == "__main__":
-#     main()
-
-# for db_name in MONGO_CLIENT.list_database_names():
-#     pp.pprint(db)
 

@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 import MongoConnection
 from icecream import ic
 import project_main as PM
-from pprint import PrettyPrinter as pp
+from pprint import PrettyPrinter
 from googleapiclient.discovery import build
 import re
 import string
@@ -19,7 +19,8 @@ Global Variables
 """
 COUNT = 1
 TOKENS_DICTIONARY = {}
-PAGE_TOKENS_LIST = []
+PAGE_TOKENS_LIST = {} # --> list of next page tokens
+PP = PrettyPrinter()
 
 def setup_yt_query():
     """This function creates the youtube model / object. Only run once.
@@ -39,7 +40,7 @@ def create_request(youtube_object, input_pageToken=""):
     returns the request that was created
     """
     request = youtube_object.playlistItems().list(part="snippet,contentDetails",
-                                                  maxResults = 50,
+                                                  maxResults = 1,
                                                   pageToken=input_pageToken,
                                                   playlistId=PM.PA_PLAYLIST_ID)
 
@@ -188,8 +189,11 @@ def process_api_response(response):
     video_description = clean_description(raw_description)
 
     nextPageToken = response['nextPageToken']
-    PAGE_TOKENS_LIST.append(nextPageToken) # --> I can slighty adjust the code if something breaks without using api calls
 
+    if nextPageToken in PAGE_TOKENS_LIST:
+        PAGE_TOKENS_LIST[nextPageToken] += 1 # --> I can slighty adjust the code if something breaks without using api calls
+    else:
+        PAGE_TOKENS_LIST[nextPageToken] = 1
     dict_response = {}
 
     dict_response['video_title'] = video_title
@@ -211,7 +215,8 @@ def iterate_through_pages(page_token=""):
     youtube_object = setup_yt_query()
     youtube_request = create_request(youtube_object,page_token)
     response = execute_request(youtube_request)
-    print(response)
+
+    PP.pprint(response)
 
     nextPageToken, dict_response = process_api_response(response)
 
@@ -226,16 +231,21 @@ def iterate_through_pages(page_token=""):
     
 
 def main(): 
+    MC.confirm_connection(MC.MONGO_CLIENT)
+
     nextPageToken = iterate_through_pages()
 
-    while nextPageToken !="":
+
+    #nextPageToken !=""
+    while COUNT < 4:
         iterate_through_pages(nextPageToken)
 
 
-    print(COUNT)
-    print(TOKENS_DICTIONARY)
+    PP.pprint(COUNT)
+    PP.pprint(TOKENS_DICTIONARY)
+    PP.pprint(PAGE_TOKENS_LIST)
     
-    MC.confirm_connection(MC.MONGO_CLIENT)
+    
    
    
 if __name__ == "__main__":
