@@ -101,9 +101,6 @@ def append_UOF_COLLECTION(dict_response):
     
     COUNT+=1
 
-def append_UOF_COLLECTION(dict_response):
-
-    return False
 # def main():
 
 #     client = create_client_connection()

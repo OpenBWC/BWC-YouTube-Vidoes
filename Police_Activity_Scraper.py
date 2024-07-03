@@ -17,7 +17,7 @@ This py file gets use of force videos and puts them into a database.
 """
 Global Variables 
 """
-COUNT = 0
+COUNT = 1
 TOKENS_DICTIONARY = {}
 PAGE_TOKENS_LIST = []
 
@@ -205,29 +205,31 @@ def process_api_response(response):
     return nextPageToken, dict_response
 
 # this function will use the 'nextPageToken' to iterate through the 
-def iterate_through_pages():
+def iterate_through_pages(page_token=""):
     global COUNT
-    if COUNT == 0:
-        youtube_object = setup_yt_query()
-        youtube_request = create_request(youtube_object)
-        response = execute_request(youtube_request)
-        pp.pprint(response)
 
-        nextPageToken, dict_response = process_api_response(response)
-        COUNT+=1
-    else:
+    youtube_object = setup_yt_query()
+    youtube_request = create_request(youtube_object,page_token)
+    response = execute_request(youtube_request)
+    print(response)
 
-        while nextPageToken != "":
-            
-            iterate_through_pages()
-            MC.append_UOF_COLLECTION(dict_response)
-            COUNT+=1
+    nextPageToken, dict_response = process_api_response(response)
+
+    MC.append_UOF_COLLECTION(dict_response)
+
+    COUNT+=1
+
+    return nextPageToken
+ 
 
 
     
 
 def main(): 
-    iterate_through_pages()
+    nextPageToken = iterate_through_pages()
+
+    while nextPageToken !="":
+        iterate_through_pages(nextPageToken)
 
 
     print(COUNT)
