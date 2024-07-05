@@ -231,7 +231,7 @@ def iterate_through_pages(page_token=""):
     
 
 def main(): 
-    MC.confirm_connection(MC.MONGO_CLIENT)
+    MC.main()
 
     nextPageToken = iterate_through_pages()
 

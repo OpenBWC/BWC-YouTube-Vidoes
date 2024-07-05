@@ -67,9 +67,8 @@ def test_mongo_connection(mongo_client):
     for db_name in mongo_client.list_database_names():
         print(db_name)
 
-def append_UOF_COLLECTION(dict_response):
+def append_UOF_COLLECTION(UOF_collection, dict_response):
     global COUNT
-    global UOF_COLLECTION
     """
     This function places takes the fields from the dictionary responses from Police Activity Scraper and inputs them into a mongoDB database
     according to the correct fields.
@@ -101,7 +100,7 @@ def append_UOF_COLLECTION(dict_response):
     """
     
     query = {'YT_video_ID': dict_response['video_ID']}
-    results =  UOF_COLLECTION.count_documents(query)
+    results =  UOF_collection.count_documents(query)
 
     if results == 0:
         return False
@@ -136,7 +135,7 @@ def append_UOF_COLLECTION(dict_response):
 
     
 
-    UOF_COLLECTION.insert_one(document_dict)
+    UOF_collection.insert_one(document_dict)
     
     COUNT+=1
 
