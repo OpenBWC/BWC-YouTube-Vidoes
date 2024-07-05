@@ -32,22 +32,26 @@ def construct_mongo_connection():
 
     test_mongo_connection(mongo_client)
 
-def create_establish_yt_database():
-    global YT_DATABASE
+    return mongo_client
 
-    if 'yt-database' in MONGO_CLIENT.list_database_names():
-        YT_DATABASE = MONGO_CLIENT['yt-database']
+def create_establish_yt_database(mongo_client):
+
+    if 'yt-database' in mongo_client.list_database_names():
+        yt_database = mongo_client['yt-database']
     else:
         print("yt-database does not exist")
 
-def instantiate_UOF_collection():
-    global UOF_COLLECTION
+def instantiate_UOF_collection(yt_database):
     
-    UOF_COLLECTION = YT_DATABASE['yt-force-used-vids']
-def instantiate_NUOF_database():
-    global NUOF_COLLECTION
+    UOF_collection = yt_database['yt-force-used-vids']
 
-    NUOF_COLLECTION = YT_DATABASE['yt-no-force-vids']
+    return UOF_collection
+def instantiate_NUOF_database(yt_database):
+    
+
+     NUOF_collection = yt_database['yt-no-force-vids']
+
+     return NUOF_collection
 
 def test_mongo_connection(mongo_client):
 
@@ -141,9 +145,9 @@ def main():
 
     construct_mongo_connection()
 
-    #create_establish_yt_database()
+    create_establish_yt_database()
 
-    #instantiate_UOF_collection()
+    instantiate_UOF_collection()
 
 
 
