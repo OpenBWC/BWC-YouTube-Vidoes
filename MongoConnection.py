@@ -99,11 +99,11 @@ def append_UOF_COLLECTION(UOF_collection, dict_response):
 
     """
     
-    query = {'YT_video_ID': dict_response['video_ID']}
-    results =  UOF_collection.count_documents(query)
+    # query = {'YT_video_ID': dict_response['video_ID']}
+    # results =  UOF_collection.count_documents(query)
 
-    if results == 0:
-        return False
+    # if results == 0:
+    #     return False
     
     document_dict = {
         'fileNumber':COUNT,

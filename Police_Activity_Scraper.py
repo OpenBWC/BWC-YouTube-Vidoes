@@ -21,6 +21,7 @@ COUNT = 1
 TOKENS_DICTIONARY = {}
 PAGE_TOKENS_LIST = {} # --> list of next page tokens
 PP = PrettyPrinter()
+NEXT_PAGE_TOKEN = ""
 
 def setup_yt_query():
     """This function creates the youtube model / object. Only run once.
@@ -32,7 +33,7 @@ def setup_yt_query():
 
     return youtube_object
 
-def create_request(youtube_object, input_pageToken=""):
+def create_request(youtube_object):
     """
     This function constructs the youtube request based on the previously created
     youtube_object AND the input_pageToken which gets results from different pages.
@@ -41,7 +42,7 @@ def create_request(youtube_object, input_pageToken=""):
     """
     request = youtube_object.playlistItems().list(part="snippet,contentDetails",
                                                   maxResults = 1,
-                                                  pageToken=input_pageToken,
+                                                  pageToken=NEXT_PAGE_TOKEN,
                                                   playlistId=PM.PA_PLAYLIST_ID)
 
     return request
@@ -147,7 +148,7 @@ def clean_description(vid_description):
     return desired_text
 
 def process_api_response(response):
-
+    global NEXT_PAGE_TOKEN
 
     """
     This function sifts through the JSON object reponse and gets the data from the following fields: 
@@ -188,12 +189,12 @@ def process_api_response(response):
 
     video_description = clean_description(raw_description)
 
-    nextPageToken = response['nextPageToken']
+    NEXT_PAGE_TOKEN = response['nextPageToken']
 
-    if nextPageToken in PAGE_TOKENS_LIST:
-        PAGE_TOKENS_LIST[nextPageToken] += 1 # --> I can slighty adjust the code if something breaks without using api calls
+    if NEXT_PAGE_TOKEN in PAGE_TOKENS_LIST:
+        PAGE_TOKENS_LIST[NEXT_PAGE_TOKEN] += 1 # --> I can slighty adjust the code if something breaks without using api calls
     else:
-        PAGE_TOKENS_LIST[nextPageToken] = 1
+        PAGE_TOKENS_LIST[NEXT_PAGE_TOKEN] = 1
     dict_response = {}
 
     dict_response['video_title'] = video_title
@@ -206,41 +207,41 @@ def process_api_response(response):
     
 
 
-    return nextPageToken, dict_response
+    return dict_response
 
 # this function will use the 'nextPageToken' to iterate through the 
-def iterate_through_pages(UOF_collection, page_token=""):
+def iterate_through_pages(UOF_collection):
     global COUNT
+    global NEXT_PAGE_TOKEN
 
     youtube_object = setup_yt_query()
-    youtube_request = create_request(youtube_object,page_token)
+    youtube_request = create_request(youtube_object)
     response = execute_request(youtube_request)
 
     PP.pprint(response)
 
-    nextPageToken, dict_response = process_api_response(response)
+    dict_response = process_api_response(response)
 
     MC.append_UOF_COLLECTION(UOF_collection, dict_response)
 
     COUNT+=1
-
-    return nextPageToken
  
 
 
     
 
 def main():
+    MC.get_mongo_creds()
     mongo_client = MC.construct_mongo_connection() 
     yt_database = MC.create_establish_yt_database(mongo_client)
     UOF_collection = MC.instantiate_UOF_collection(yt_database)
 
-    nextPageToken = iterate_through_pages(UOF_collection)
+    iterate_through_pages(UOF_collection)
 
 
     #nextPageToken !=""
     while COUNT < 4:
-        iterate_through_pages(UOF_collection, nextPageToken)
+        iterate_through_pages(UOF_collection)
 
 
     PP.pprint(COUNT)
