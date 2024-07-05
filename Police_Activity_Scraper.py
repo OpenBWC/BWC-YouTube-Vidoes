@@ -41,7 +41,7 @@ def create_request(youtube_object):
     returns the request that was created
     """
     request = youtube_object.playlistItems().list(part="snippet,contentDetails",
-                                                  maxResults = 1,
+                                                  maxResults = 50,
                                                   pageToken=NEXT_PAGE_TOKEN,
                                                   playlistId=PM.PA_PLAYLIST_ID)
 
@@ -240,8 +240,8 @@ def main():
 
 
     #nextPageToken !=""
-    while COUNT < 4:
-        iterate_through_pages(UOF_collection)
+    
+    iterate_through_pages(UOF_collection)
 
 
     PP.pprint(COUNT)
