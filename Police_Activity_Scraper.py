@@ -41,7 +41,7 @@ def create_request(youtube_object):
     returns the request that was created
     """
     request = youtube_object.playlistItems().list(part="snippet,contentDetails",
-                                                  maxResults = 50,
+                                                  maxResults = 1,
                                                   pageToken=NEXT_PAGE_TOKEN,
                                                   playlistId=PM.PA_PLAYLIST_ID)
 
@@ -189,7 +189,7 @@ def process_api_response(response):
 
     video_description = clean_description(raw_description)
 
-    NEXT_PAGE_TOKEN = response['nextPageToken']
+    Nc
 
     if NEXT_PAGE_TOKEN in PAGE_TOKENS_LIST:
         PAGE_TOKENS_LIST[NEXT_PAGE_TOKEN] += 1 # --> I can slighty adjust the code if something breaks without using api calls
@@ -218,11 +218,12 @@ def iterate_through_pages(UOF_collection):
     youtube_request = create_request(youtube_object)
     response = execute_request(youtube_request)
 
-    PP.pprint(response)
-
+    
+    #PP.pprint(response)
+    NEXT_PAGE_TOKEN = response['nextPageToken']
     dict_response = process_api_response(response)
 
-    MC.append_UOF_COLLECTION(UOF_collection, dict_response)
+    #MC.append_UOF_COLLECTION(UOF_collection, dict_response)
 
     COUNT+=1
  
@@ -240,8 +241,8 @@ def main():
 
 
     #nextPageToken !=""
-    
-    iterate_through_pages(UOF_collection)
+    while COUNT < 1911:
+        iterate_through_pages(UOF_collection)
 
 
     PP.pprint(COUNT)

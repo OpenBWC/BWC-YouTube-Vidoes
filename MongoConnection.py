@@ -48,12 +48,18 @@ def instantiate_UOF_collection(yt_database):
     UOF_collection = yt_database['yt-force-used-vids']
 
     return UOF_collection
-def instantiate_NUOF_database(yt_database):
+def instantiate_NUOF_collection(yt_database):
     
 
      NUOF_collection = yt_database['yt-no-force-vids']
 
      return NUOF_collection
+
+def instantiate_NLP_Tokens_collection(yt_database):
+
+    NLP_Tokens_collection = yt_database['nlp-tokens-yt-force-used']
+
+    return NLP_Tokens_collection
 
 def test_mongo_connection(mongo_client):
 
@@ -134,11 +140,10 @@ def append_UOF_COLLECTION(UOF_collection, dict_response):
 
 
     
-
+    
     UOF_collection.insert_one(document_dict)
     
     COUNT+=1
-
 
 def main():
     get_mongo_creds()
