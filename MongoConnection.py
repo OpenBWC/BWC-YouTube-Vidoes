@@ -41,6 +41,8 @@ def create_establish_yt_database(mongo_client):
     else:
         print("yt-database does not exist")
 
+    return yt_database
+
 def instantiate_UOF_collection(yt_database):
     
     UOF_collection = yt_database['yt-force-used-vids']
@@ -142,12 +144,9 @@ def append_UOF_COLLECTION(dict_response):
 def main():
     get_mongo_creds()
     
+    # contstruct mongo conn is returning the mongo_client --> create/estab yt database is returning yt_database
 
-    construct_mongo_connection()
-
-    create_establish_yt_database()
-
-    instantiate_UOF_collection()
+    UOF_collection = instantiate_UOF_collection(create_establish_yt_database(construct_mongo_connection()))
 
 
 
