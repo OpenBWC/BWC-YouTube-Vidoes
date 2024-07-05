@@ -9,6 +9,7 @@ from googleapiclient.discovery import build
 import re
 import string
 import MongoConnection as MC
+import csv
 
 """
 This py file gets use of force videos and puts them into a database.
@@ -189,7 +190,7 @@ def process_api_response(response):
 
     video_description = clean_description(raw_description)
 
-    Nc
+    
 
     if NEXT_PAGE_TOKEN in PAGE_TOKENS_LIST:
         PAGE_TOKENS_LIST[NEXT_PAGE_TOKEN] += 1 # --> I can slighty adjust the code if something breaks without using api calls
@@ -206,7 +207,6 @@ def process_api_response(response):
     write_tokens_to_dict(tokenize_vid_title(video_title))
     
 
-
     return dict_response
 
 # this function will use the 'nextPageToken' to iterate through the 
@@ -219,11 +219,11 @@ def iterate_through_pages(UOF_collection):
     response = execute_request(youtube_request)
 
     
-    #PP.pprint(response)
+    PP.pprint(response)
     NEXT_PAGE_TOKEN = response['nextPageToken']
     dict_response = process_api_response(response)
 
-    #MC.append_UOF_COLLECTION(UOF_collection, dict_response)
+    MC.append_UOF_COLLECTION(UOF_collection, dict_response)
 
     COUNT+=1
  
@@ -247,9 +247,19 @@ def main():
 
     PP.pprint(COUNT)
     PP.pprint(TOKENS_DICTIONARY)
-    PP.pprint(PAGE_TOKENS_LIST)
+    #PP.pprint(PAGE_TOKENS_LIST)
+    
+    fields = ['Word','Occurances']
+
+    with open("tokens.csv","w") as tokens_file:
+        writer = csv.writer(tokens_file)
+        for key,value in TOKENS_DICTIONARY.items():
+            writer.writerow([key,value])
+        #writer.writerows([TOKENS_DICTIONARY])
+
     
     
+
    
    
 if __name__ == "__main__":
