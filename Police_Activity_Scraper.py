@@ -209,7 +209,7 @@ def process_api_response(response):
     return nextPageToken, dict_response
 
 # this function will use the 'nextPageToken' to iterate through the 
-def iterate_through_pages(page_token=""):
+def iterate_through_pages(UOF_collection, page_token=""):
     global COUNT
 
     youtube_object = setup_yt_query()
@@ -220,7 +220,7 @@ def iterate_through_pages(page_token=""):
 
     nextPageToken, dict_response = process_api_response(response)
 
-    MC.append_UOF_COLLECTION(dict_response)
+    MC.append_UOF_COLLECTION(UOF_collection, dict_response)
 
     COUNT+=1
 
@@ -230,15 +230,17 @@ def iterate_through_pages(page_token=""):
 
     
 
-def main(): 
-    MC.main()
+def main():
+    mongo_client = MC.construct_mongo_connection() 
+    yt_database = MC.create_establish_yt_database(mongo_client)
+    UOF_collection = MC.instantiate_UOF_collection(yt_database)
 
-    nextPageToken = iterate_through_pages()
+    nextPageToken = iterate_through_pages(UOF_collection)
 
 
     #nextPageToken !=""
     while COUNT < 4:
-        iterate_through_pages(nextPageToken)
+        iterate_through_pages(UOF_collection, nextPageToken)
 
 
     PP.pprint(COUNT)
