@@ -6,7 +6,7 @@ from wordcloud import WordCloud
 import random
 
 # Load data as pandas dataframe
-df = pd.read_csv('tokens.csv')
+df = pd.read_csv('tokens_uof.csv')
 
 # Strip any leading or trailing whitespace from the column names
 df.columns = [col.strip() for col in df.columns]
@@ -34,5 +34,5 @@ wc.recolor(color_func=random_color_func)
 plt.figure(figsize=(20, 10))
 plt.imshow(wc, interpolation="bilinear")
 plt.axis("off")
-plt.savefig('word_cloud.png', format='png')
+plt.savefig('word_cloud_uof.png', format='png')
 plt.close()
