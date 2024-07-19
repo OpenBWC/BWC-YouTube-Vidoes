@@ -11,8 +11,7 @@ Global Variables
 COUNT = 0
 MONGO_USERNAME = ""
 MONGO_PASSWORD = ""
-
-
+YT_UOF_LINKS = {}
 
 
 
@@ -145,6 +144,11 @@ def append_UOF_COLLECTION(UOF_collection, dict_response):
     
     COUNT+=1
 
+def aquire_yt_links(UOF_collection):
+
+    UOF_collection.users.find(
+        {}
+    )
 def main():
     get_mongo_creds()
     
