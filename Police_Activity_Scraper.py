@@ -251,11 +251,11 @@ def main():
     
     fields = ['Word','Occurances']
 
-    with open("tokens.csv","w") as tokens_file:
+    """with open("tokens.csv","w") as tokens_file:
         writer = csv.writer(tokens_file)
         for key,value in TOKENS_DICTIONARY.items():
             writer.writerow([key,value])
-        #writer.writerows([TOKENS_DICTIONARY])
+        #writer.writerows([TOKENS_DICTIONARY])"""
 
     
     
