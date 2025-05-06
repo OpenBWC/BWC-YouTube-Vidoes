@@ -1,3 +1,10 @@
+"""
+
+
+
+Author: @AnitaSrbinovska
+"""
+
 # This program generates a word cloud from word frequency data in a CSV file and saves it as a PNG image.
 
 import pandas as pd
